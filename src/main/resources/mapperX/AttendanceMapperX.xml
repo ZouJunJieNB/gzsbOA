@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gzsb.root.gzsbroot.dao.mapperX.AttendanceMapperX">
+    <select id="findAllByCondition" resultType="Attendance">
+
+        SELECT a.*,
+        d.DEPARTMENT_CODE,
+        d.DEPARTMENT_NAME,
+        s.DESCRIPTION STATUS_DESCRIPTION,
+        t.DESCRIPTION TYPE_DESCRIPTION
+        FROM `gzsb_attendance` a
+        LEFT JOIN gzsb_operator_position op
+        ON a.OPERATOR = op.OPERATOR
+        LEFT JOIN gzsb_department_position dp
+        ON op.POSITION_ID = dp.POSITION_ID
+        LEFT JOIN gzsb_department d
+        ON d.DEPARTMENT_CODE = dp.DEPARTMENT_CODE
+        lEFT JOIN gzsb_status s
+        ON a.PLAN_STATUS_CODE = s.PLAN_STATUS_CODE
+        LEFT JOIN gzsb_type t
+        ON t.TYPE_CODE = a.TYPE_CODE
+        <where>
+            <if test="attendance.departmentCode != null and attendance.departmentCode != ''">
+                d.DEPARTMENT_CODE = #{attendance.departmentCode}
+            </if>
+            <if test="attendance.typeCode != null and attendance.typeCode != ''">
+                and a.TYPE_CODE = #{attendance.typeCode}
+            </if>
+            <if test="attendance.planStatusCode != null and attendance.planStatusCode != ''">
+                and a.PLAN_STATUS_CODE = #{attendance.planStatusCode}
+            </if>
+            <if test="attendance.operator != null and attendance.operator != ''">
+                and a.OPERATOR = #{attendance.operator}
+            </if>
+            <if test="startTime != null and endTime != null">
+                and a.A_TIME between #{startTime} and #{endTime}
+            </if>
+        </where>
+
+        ORDER BY a.A_TIME DESC
+    </select>
+
+    <insert id="addAttendance">
+
+        INSERT INTO `gzsbdb`.`gzsb_attendance`
+        (`TYPE_CODE`,
+        `PLAN_STATUS_CODE`,
+        `OPERATOR`,
+        `ID_ADDRESS`,
+        `REMARK`,
+        `A_TIME`
+        )
+        VALUES
+        (#{typeCode},
+        #{planStatusCode},
+        #{operator},
+        #{idAddress},
+        #{remark},
+        #{aTime}
+        );
+
+    </insert>
+
+    <select id="findToday" resultType="Attendance">
+        SELECT 	* FROM `gzsb_attendance`
+        WHERE <![CDATA[ A_TIME > #{toDay} AND A_TIME <= #{tomorrow} ]]>  AND OPERATOR = #{operator}
+        AND TYPE_CODE = #{typeCode}
+    </select>
+
+    <select id="findAbsenceByOperator" resultType="Integer">
+      SELECT count(*) FROM  `gzsb_attendance`
+        WHERE DATEDIFF(`A_TIME`,NOW())=0
+        AND TYPE_CODE = 'goWork'
+        AND OPERATOR = #{operator}
+    </select>
+
+    <select id="findAbsenceByOperatorOff" resultType="Integer">
+         SELECT count(*) FROM  `gzsb_attendance`
+        WHERE DATEDIFF(`A_TIME`,NOW())=0
+        AND TYPE_CODE = 'offWork'
+        AND OPERATOR = #{operator}
+    </select>
+
+    <select id="selectHomeAll" resultType="Map" parameterType="Map">
+        select plan_status_code
+        from gzsb_attendance
+        where 1=1
+           AND OPERATOR = #{operator}
+             AND A_TIME BETWEEN #{startTime} AND #{endTime}
+
+    </select>
+
+    <select id="selectHomeAlls" resultType="Map" parameterType="Map">
+        select plan_status_code
+        from gzsb_attendance
+        where 1=1
+        AND A_TIME BETWEEN #{startTime} AND #{endTime}
+    </select>
+
+
+</mapper>

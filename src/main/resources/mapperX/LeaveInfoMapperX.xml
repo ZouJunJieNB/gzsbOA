@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gzsb.root.gzsbroot.dao.mapperX.LeaveInfoMapperX">
+
+
+    <!--&#45;&#45;         insert into gzsb_leave_info values(#{status},#{leaveMsg},#{userCode},#{startTime},#{endTime},#{realName})-->
+    <insert id="insert"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO `gzsbdb`.`gzsb_leave_info`
+        (
+        `leave_msg`,
+        `user_code`,
+        `start_time`,
+        `end_time`,
+        `real_name`,
+        `status`
+        )
+        VALUES
+        (
+        #{leaveMsg},#{userCode},#{startTime},#{endTime},#{realName},#{status}
+        );
+    </insert>
+
+    <update id="updateStatus">
+        update gzsb_leave_info set status=#{status} where id = #{id}
+    </update>
+
+    <update id="updateHrRemarks">
+        update gzsb_leave_info set hr_remarks=#{hrRemarks} where id = #{id}
+    </update>
+
+    <update id="updateProjectRemarks">
+        update gzsb_leave_info set project_remarks=#{projectRemarks} where id = #{id}
+    </update>
+
+
+
+    <select id="QueryByUserId" resultType="LeaveInfo">
+        select * from gzsb_leave_info where  id = #{id}
+    </select>
+
+    <select id="findByCode" resultType="LeaveInfo">
+        select * from gzsb_leave_info where  user_code = #{code}
+    </select>
+
+    <select id="findPassByOperator" resultType="LeaveInfo">
+        select * from gzsb_leave_info where  user_code = #{operator} and status='leave_2'
+    </select>
+
+
+</mapper>

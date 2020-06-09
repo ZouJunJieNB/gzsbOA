@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gzsb.root.gzsbroot.dao.mapperX.RolePermissionMapperX">
+    <resultMap id="BaseResultMap" type="com.gzsb.root.gzsbroot.dao.entityX.RolePermissionX">
+        <id column="ID" property="id"/>
+        <result column="ROLE_CODE" property="roleCode"/>
+        <result column="ROLE_NAME" property="roleName"/>
+        <result column="PERMISSION_CODE" property="permissionCode"/>
+        <result column="PERMISSION_NAME" property="permissionName"/>
+        <result column="PERMISSION_URL" property="permissionUrl"/>
+        <result column="FATHER_CODE" property="fatherCode"/>
+        <result column="SORT" property="sort"/>
+    </resultMap>
+    <select id="selectFindAll" resultMap="BaseResultMap">
+           SELECT
+            c.`PERMISSION_CODE`,
+			c.`PERMISSION_NAME`,
+			b.`ROLE_CODE`,
+			b.`ROLE_NAME`,
+			c.`PERMISSION_URL`,
+			c.`FATHER_CODE`,
+			c.`SORT`
+      FROM gzsb_role_permission as a
+      left join gzsb_role as b
+      on a.ROLE_CODE = b.ROLE_CODE
+      left join gzsb_permission as c
+      on a.PERMISSION_CODE = c.PERMISSION_CODE
+    </select>
+
+    <resultMap id="BaseResultMap_2" type="com.gzsb.root.gzsbroot.dao.entityX.OperatorRolePositionX">
+        <id column="OPERATOR" jdbcType="VARCHAR" property="operator"/>
+        <result column="PASSWORD" jdbcType="VARCHAR" property="password"/>
+        <result column="PASSWORD_SALT" jdbcType="VARCHAR" property="passwordSalt"/>
+        <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="REAL_NAME" jdbcType="VARCHAR" property="realName"/>
+        <result column="JOB_NUM" jdbcType="VARCHAR" property="jobNum"/>
+        <result column="PHONE" jdbcType="VARCHAR" property="phone"/>
+        <result column="EMAIL" jdbcType="VARCHAR" property="email"/>
+        <result column="DEPARTMENT_CODE" jdbcType="VARCHAR" property="departmentCode"/>
+        <result column="DEPARTMENT_NAME" jdbcType="VARCHAR" property="departmentName"/>
+        <result column="ROLE_CODE" jdbcType="VARCHAR" property="roleCode"/>
+        <result column="ROLE_NAME" jdbcType="VARCHAR" property="roleName"/>
+    </resultMap>
+
+    <select id="selectRoleFindAll" resultMap="BaseResultMap_2">
+        SELECT
+       a.OPERATOR,
+        a.PASSWORD,
+        a.PASSWORD_SALT,
+        a.CREATE_TIME,
+        a.REAL_NAME,
+        a.JOB_NUM,
+        a.PHONE,
+        a.EMAIL,
+        c.ROLE_CODE,
+        c.ROLE_NAME,
+        f.POSITION_ID,
+        f.POSITION_NAME
+        FROM GZSB_OPERATOR AS a
+        LEFT JOIN GZSB_OPERATOR_ROLE AS b
+        ON a.OPERATOR = b.OPERATOR
+        LEFT JOIN GZSB_ROLE AS c
+        ON b.ROLE_CODE = c.ROLE_CODE
+        LEFT JOIN gzsb_operator_position AS d
+        ON  a.OPERATOR = d.OPERATOR
+        LEFT JOIN gzsb_department_position as f
+        ON d.POSITION_ID = f.POSITION_ID
+    </select>
+
+    <select id="findAllRolePermission" resultType="String">
+        SELECT
+            `PERMISSION_CODE`
+            FROM
+            `gzsbdb`.`gzsb_role_permission`
+            WHERE ROLE_CODE = #{roleCode}
+    </select>
+
+    <delete id="deleteRolePermissionByRoleCode">
+        DELETE FROM  `gzsbdb`.`gzsb_role_permission` WHERE ROLE_CODE = #{roleCode}
+    </delete>
+    <delete id="deleteRolePermissionBypermissionCode">
+        DELETE FROM  `gzsbdb`.`gzsb_role_permission` WHERE PERMISSION_CODE = #{permissionCode}
+    </delete>
+
+    <insert id="addRolePermission">
+        INSERT INTO `gzsbdb`.`gzsb_role_permission`
+            (`PERMISSION_CODE`,
+            `ROLE_CODE`
+            )
+            VALUES
+            (#{permissionCode},
+            #{roleCode}
+            );
+
+    </insert>
+
+</mapper>

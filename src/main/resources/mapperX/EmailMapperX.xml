@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gzsb.root.gzsbroot.dao.mapperX.EmailMapperX">
+
+    <insert id="addEmail">
+        INSERT INTO `gzsb_emal`
+            (`TYPE_CODE`,
+            `OPERATOR`,
+            `PLAN_STATUS_CODE`,
+            `THEME`,
+            `CONTETNT`,
+            `SEND_TIME`,
+            `RECEIVE`
+            )
+            VALUES
+            (#{typeCode},
+            #{operator},
+            #{planStatusCode},
+             #{theme},
+            #{contetnt},
+            #{sendTime},
+            #{receive}
+            );
+    </insert>
+
+    <select id="findEmail" resultType="Emal">
+        SELECT 	e.*,
+            s.DESCRIPTION STATUS_DESCRIPTION,
+            t.DESCRIPTION TYPE_DESCRIPTION
+            FROM `gzsb_emal` e
+            LEFT JOIN gzsb_status s
+            ON e.PLAN_STATUS_CODE = s.PLAN_STATUS_CODE
+            LEFT JOIN gzsb_type t
+            ON t.TYPE_CODE = e.TYPE_CODE
+            <where>
+                <if test="planStatusCode != null and planStatusCode != ''">
+                    e.PLAN_STATUS_CODE = #{planStatusCode}
+                </if>
+                <if test="receive != null and receive != ''">
+                    and e.RECEIVE = #{receive}
+                </if>
+                <if test="operator != null and operator != ''">
+                    and  e.OPERATOR = #{operator}
+                </if>
+            </where>
+            ORDER BY e.SEND_TIME DESC
+    </select>
+
+    <update id="updateStatus">
+        UPDATE `gzsb_emal`
+            SET
+            `PLAN_STATUS_CODE` = #{planStatusCode}
+            WHERE
+            `EMAIL_ID` = #{emailId};
+    </update>
+
+    <delete id="deleteEmail">
+
+        DELETE FROM `gzsbdb`.`gzsb_emal`
+            WHERE
+            `EMAIL_ID` = #{emailId};
+    </delete>
+    <select id="findEmailCount" resultType="Integer">
+        select count(*) from `gzsbdb`.`gzsb_emal` where RECEIVE = #{receive} AND STATUS = 0
+    </select>
+    <update id="updateStatusById">
+         UPDATE `gzsb_emal`
+            SET
+            STATUS = 1
+            WHERE
+            `EMAIL_ID` = #{emailId};
+    </update>
+</mapper>

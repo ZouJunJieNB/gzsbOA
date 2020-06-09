@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gzsb.root.gzsbroot.dao.mapperX.MettingRoomMapperX">
+
+    <resultMap id="BaseResultMap" type="com.gzsb.root.gzsbroot.dao.entity.MettingRoom">
+        <id column="MM_ID" property="mmId"/>
+        <result column="METTING_ROOM_NAME" property="mettingRoomName"/>
+        <result column="METTING_ADDRESS" property="mettingAddress"/>
+    </resultMap>
+
+    <select id="findAllMettingRoom" resultMap="BaseResultMap">
+        SELECT * FROM gzsb_metting_room
+    </select>
+
+    <update id="updateMettingRoom">
+        UPDATE gzsb_metting_room SET METTING_ROOM_NAME=#{mettingRoomName},METTING_ADDRESS=#{mettingAddress},DESCRIPTION=#{description} where MM_ID=#{mmId}
+    </update>
+
+    <delete id="deleteMettingRoom">
+        DELETE FROM `gzsb_metting_room`
+        WHERE
+        `MM_ID` = #{mmId} ;
+     </delete>
+
+    <insert id="addMettingRoom">
+        INSERT INTO `gzsb_metting_room`
+        (`METTING_ROOM_NAME`,
+        `METTING_ADDRESS`,
+        `DESCRIPTION`
+        )
+        VALUES
+        (#{mettingRoomName},
+        #{mettingAddress},
+        #{description}
+        );
+    </insert>
+    <select id="findByRoomName" resultType="Integer">
+      select count(*) from gzsb_metting_room where METTING_ROOM_NAME = #{mettingRoomName}
+    </select>
+
+</mapper>

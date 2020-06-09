@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gzsb.root.gzsbroot.dao.mapperX.OperatorPositionMapperX">
+
+    <insert id="addOperatorPosition">
+    INSERT INTO `gzsbdb`.`gzsb_operator_position`
+        ( `POSITION_ID`,
+        `OPERATOR`
+        )
+        VALUES
+        (#{positionId},
+        #{operator}
+        );
+    </insert>
+
+    <delete id="deleteOperatorPosition">
+        DELETE FROM `gzsb_operator_position` WHERE OPERATOR = #{operator}
+    </delete>
+
+    <update id="updateOperatorPosition">
+        UPDATE `gzsb_operator_position` SET POSITION_ID = #{positionId} WHERE OPERATOR = #{operator}
+    </update>
+
+</mapper>

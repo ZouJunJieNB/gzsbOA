@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gzsb.root.gzsbroot.dao.mapperX.DailyMapper">
+
+    <insert id="add" parameterType="Daily">
+
+	INSERT INTO `gzsbdb`.`gzsb_daily`
+	(
+	`TYPE_CODE`,
+	`OPERATOR`,
+	`DAILY_DETAILS`,
+	`DAILY_SUBMITTIME`,
+	`DAILY_UPDATETIME`,
+	`DAILY_STARTTIME`,
+	`DAILY_ENDTIME`
+	)
+	VALUES
+	(
+	#{typeCode},
+	#{operator},
+	#{dailyDetails},
+	#{dailySubmitTime},
+	#{dailyUpdateTime},
+	#{dailyStartTime},
+	#{dailyEndTime}
+	);
+    </insert>
+
+    <select id="selectFindAll" resultType="Daily">
+
+	SELECT
+	a.`id`,
+	b.`DESCRIPTION`,
+	a.`OPERATOR`,
+	a.`DAILY_DETAILS`,
+	a.`DAILY_SUBMITTIME`,
+	a.`DAILY_UPDATETIME`,
+	a.`DAILY_STARTTIME`,
+	a.`DAILY_ENDTIME`,
+	dp.DEPARTMENT_CODE
+	FROM
+	`gzsb_daily` AS a
+	LEFT JOIN `gzsb_type` AS b
+	ON a.TYPE_CODE = b.TYPE_CODE
+	LEFT JOIN gzsb_operator_position op
+	ON op.OPERATOR = a.OPERATOR
+	LEFT JOIN gzsb_department_position dp
+	ON op.POSITION_ID = dp.POSITION_ID
+	<if test="departmentCode != null and departmentCode != ''">
+		WHERE dp.DEPARTMENT_CODE = #{departmentCode}
+	</if>
+
+	</select>
+
+    <update id="update" parameterType="Daily">
+
+UPDATE `gzsbdb`.`gzsb_daily`
+	SET
+	`TYPE_CODE` = #{typeCode} ,
+	`OPERATOR` = #{operator} ,
+	`DAILY_DETAILS` = #{dailyDetails} ,
+	`DAILY_SUBMITTIME` = #{dailySubmitTime} ,
+	`DAILY_UPDATETIME` = #{dailyUpdateTime} ,
+	`DAILY_STARTTIME` = #{dailyStartTime} ,
+	`DAILY_ENDTIME` = #{dailyEndTime}
+	WHERE
+	`id` = #{id};
+	</update>
+
+    <select id="selectFindDaily" parameterType="int" resultType="Daily">
+	  SELECT
+	`TYPE_CODE`,
+	`OPERATOR`,
+	`DAILY_DETAILS`,
+	`DAILY_SUBMITTIME`,
+	`DAILY_UPDATETIME`,
+	`DAILY_STARTTIME`,
+	`DAILY_ENDTIME`
+	FROM
+	`gzsb_daily`
+	WHERE `id`=#{id}
+	</select>
+
+	<select id="selectUserDaily" parameterType="String" resultType="Daily">
+SELECT
+	a.`id`,
+	b.`DESCRIPTION`,
+	a.`OPERATOR`,
+	a.`DAILY_DETAILS`,
+	a.`DAILY_SUBMITTIME`,
+	a.`DAILY_UPDATETIME`,
+	a.`DAILY_STARTTIME`,
+	a.`DAILY_ENDTIME`
+	FROM
+	`gzsb_daily` as a
+	left join `gzsb_type` as b
+	on a.TYPE_CODE = b.TYPE_CODE
+	WHERE `operator`=#{operator}
+	</select>
+
+	<delete id="deleteDaily" parameterType="int">
+		delete from `gzsb_daily` where `id` = #{id}
+
+	</delete>
+
+</mapper>

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gzsb.root.gzsbroot.dao.mapperX.DepartmentMapperX">
+    <select id="findByOperator" resultType="OperatorPosition">
+        SELECT
+        dp.POSITION_NAME,
+        d.DEPARTMENT_NAME,
+        d.DEPARTMENT_CODE
+        FROM `gzsb_operator_position` op
+        INNER JOIN gzsb_department_position dp ON op.POSITION_ID = dp.POSITION_ID
+        INNER JOIN gzsb_department d ON dp.DEPARTMENT_CODE = d.DEPARTMENT_CODE
+        WHERE op.OPERATOR = #{operator}
+    </select>
+
+    <select id="findAllDepartment" resultType="Department">
+        SELECT d1.*,d2.DEPARTMENT_NAME fatherName FROM gzsb_department d1
+        LEFT JOIN gzsb_department d2 ON d1.FATHER_CODE = d2.DEPARTMENT_CODE
+        <where>
+            <if test="departmentName != null and departmentName != ''">
+                d1.DEPARTMENT_NAME like "%"#{departmentName}"%"
+            </if>
+            <if test="fatherCode != null and fatherCode != ''">
+                and d1.FATHER_CODE = #{fatherCode}
+            </if>
+        </where>
+    </select>
+
+    <insert id="addDepartment">
+
+      INSERT INTO `gzsbdb`.`gzsb_department`
+        (`DEPARTMENT_CODE`,
+        `FATHER_CODE`,
+        `DEPARTMENT_NAME`,
+        `WORK_TIME_AM`,
+        `WORK_TIME_PM`,
+        `SORT`
+        )
+        VALUES
+        (#{departmentCode},
+        #{fatherCode},
+        #{departmentName},
+        #{workTimeAm},
+        #{workTimePm},
+        '0'
+        );
+    </insert>
+
+    <select id="findDepartmentByCode" resultType="Department">
+        select * from gzsb_department where DEPARTMENT_CODE = #{departmentCode}
+    </select>
+
+    <update id="updateDepartment">
+
+        UPDATE `gzsbdb`.`gzsb_department`
+        SET
+        `FATHER_CODE` = #{fatherCode},
+        `DEPARTMENT_NAME` = #{departmentName},
+        `WORK_TIME_AM` =  #{workTimeAm},
+        `WORK_TIME_PM` =  #{workTimePm}
+        WHERE
+        `DEPARTMENT_CODE` = #{departmentCode};
+
+    </update>
+
+    <select id="findOperatorPositionByDepartmentCode" resultType="OperatorPosition">
+        SELECT
+        dp.POSITION_NAME,
+        d.DEPARTMENT_NAME,
+        d.DEPARTMENT_CODE,
+        op.OPERATOR
+        FROM `gzsb_operator_position` op
+        INNER JOIN gzsb_department_position dp ON op.POSITION_ID = dp.POSITION_ID
+        INNER JOIN gzsb_department d ON dp.DEPARTMENT_CODE = d.DEPARTMENT_CODE
+        WHERE d.DEPARTMENT_CODE = #{departmentCode}
+    </select>
+
+    <select id="findDepartmentByOperator" resultType="Department">
+        SELECT 	d.* FROM `gzsb_department` d
+        LEFT JOIN gzsb_department_position dp
+        ON d.DEPARTMENT_CODE = dp.DEPARTMENT_CODE
+        LEFT JOIN gzsb_operator_position op
+        ON dp.POSITION_ID = op.POSITION_ID
+        WHERE op.OPERATOR = #{operator}
+    </select>
+
+</mapper>

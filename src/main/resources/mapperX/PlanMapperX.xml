@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gzsb.root.gzsbroot.dao.mapperX.PlanMapperX">
+   <insert id="addPlan">
+       INSERT INTO `gzsb_plan`
+        (`DEPARTMENT_CODE`,
+        `OPERATOR`,
+        `PLAN_STATUS_CODE`,
+        `TYPE_CODE`,
+        `PLAN_CONTENT`,
+        `PLAN_TIME`
+        )
+        VALUES
+        (#{departmentCode},
+        #{operator},
+        #{planStatusCode},
+        #{typeCode},
+        #{planContent},
+        #{planTime}
+        );
+   </insert>
+
+    <delete id="deletePlan">
+        DELETE FROM gzsb_plan WHERE PLAN_ID = #{planId}
+    </delete>
+
+    <update id="updatePlan">
+        UPDATE `gzsb_plan`
+        SET `PLAN_STATUS_CODE` = #{planStatusCode}
+        WHERE `PLAN_ID` = #{planId};
+    </update>
+
+    <update id="updateTime">
+        UPDATE `gzsb_plan`
+        SET `PLAN_TIME` = #{planTime}
+        WHERE `PLAN_ID` = #{planId};
+    </update>
+
+    <select id="findAllPlan" resultType="Plan">
+        SELECT 	p.*,
+        d.DEPARTMENT_NAME,
+        s.DESCRIPTION STATUS_DESCRIPTION,
+        t.DESCRIPTION TYPE_DESCRIPTION
+        FROM `gzsb_plan` p
+        INNER JOIN gzsb_department d
+        ON p.`DEPARTMENT_CODE` = d.DEPARTMENT_CODE
+        INNER JOIN gzsb_status s
+        ON p.PLAN_STATUS_CODE = s.PLAN_STATUS_CODE
+        LEFT JOIN gzsb_type t
+        ON t.TYPE_CODE = p.TYPE_CODE
+        <where>
+            <if test="departmentCode != null and departmentCode != ''">
+                p.DEPARTMENT_CODE=#{departmentCode}
+            </if>
+            <if test="operator != null and operator != ''">
+                and p.OPERATOR=#{operator}
+            </if>
+            <if test="planStatusCode != null and planStatusCode != ''">
+                and p.PLAN_STATUS_CODE=#{planStatusCode}
+            </if>
+            <if test="typeCode != null and typeCode != ''">
+                and p.TYPE_CODE=#{typeCode}
+            </if>
+        </where>
+
+    </select>
+
+    <select id="findById" resultType="Plan">
+        SELECT 	p.*,
+        d.DEPARTMENT_NAME,
+        s.DESCRIPTION STATUS_DESCRIPTION,
+        t.DESCRIPTION TYPE_DESCRIPTION
+        FROM `gzsb_plan` p
+        INNER JOIN gzsb_department d
+        ON p.`DEPARTMENT_CODE` = d.DEPARTMENT_CODE
+        INNER JOIN gzsb_status s
+        ON p.PLAN_STATUS_CODE = s.PLAN_STATUS_CODE
+        LEFT JOIN gzsb_type t
+        ON t.TYPE_CODE = p.TYPE_CODE
+        WHERE p.PLAN_ID = #{planId}
+    </select>
+
+    <update id="updateDays">
+
+        UPDATE `gzsbdb`.`gzsb_plan`
+        <trim prefix="set" suffixOverrides=",">
+            <if test="delayDays != null and delayDays != 0">
+                `DELAY_DAYS` = #{delayDays}
+            </if>
+            <if test="overtimeDays != null and overtimeDays != 0">
+                `OVERTIME_DAYS` = #{overtimeDays}
+            </if>
+        </trim>
+        WHERE
+        `PLAN_ID` = #{planId}
+
+    </update>
+
+
+</mapper>

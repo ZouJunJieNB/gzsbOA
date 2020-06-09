@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gzsb.root.gzsbroot.dao.mapperX.PermissionMapperX">
+    <delete id="delete">
+        DELETE FROM GZSB_PERMISSION WHERE PERMISSION_CODE = #{permissionCode}
+    </delete>
+    <select id="findAllPermission" resultType="Permission">
+        SELECT 	*
+
+            FROM
+            `gzsbdb`.`gzsb_permission`
+    </select>
+</mapper>

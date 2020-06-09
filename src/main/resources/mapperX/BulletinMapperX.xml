@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gzsb.root.gzsbroot.dao.mapperX.BulletinMapperX">
+
+    <resultMap id="BaseMap" type="Bulletin">
+        <id column="BULLETIN_ID" property="bulletinId"></id>
+        <association property="status" javaType="Status">
+            <result column="s_DESCRIPTION" property="description"></result>
+        </association>
+        <association property="department" javaType="Department"></association>
+        <association property="type" javaType="Type">
+            <result column="t_DESCRIPTION" property="description"></result>
+        </association>
+    </resultMap>
+
+    <select id="findAllBulletin" resultMap="BaseMap">
+        SELECT b.*,s.DESCRIPTION s_DESCRIPTION,d.DEPARTMENT_NAME,t.DESCRIPTION t_DESCRIPTION
+        FROM `gzsb_bulletin` b
+        LEFT JOIN gzsb_status s
+        ON b.PLAN_STATUS_CODE = s.PLAN_STATUS_CODE
+        LEFT JOIN gzsb_department d
+        ON b.DEPARTMENT_CODE = d.DEPARTMENT_CODE
+        LEFT JOIN gzsb_type t
+        ON b.TYPE_CODE = t.TYPE_CODE
+        <where>
+            <if test="planStatusCode != null and planStatusCode != ''">
+                b.PLAN_STATUS_CODE = #{planStatusCode}
+            </if>
+            <if test="departmentCode != null and departmentCode != ''">
+                and b.DEPARTMENT_CODE = #{departmentCode}
+            </if>
+            <if test="typeCode != null and typeCode != ''">
+                and b.TYPE_CODE = #{typeCode}
+            </if>
+        </where>
+        ORDER BY b.TIME DESC
+    </select>
+
+    <insert id="addBulletin">
+        INSERT INTO `gzsbdb`.`gzsb_bulletin`
+        (`OPERATOR`,
+        `PLAN_STATUS_CODE`,
+        `DEPARTMENT_CODE`,
+        `TYPE_CODE`,
+        `THEME`,
+        `BULLETIN_CONTENT`,
+        `TIME`
+        )
+        VALUES
+        (#{operator},
+        #{planStatusCode},
+        #{departmentCode},
+        #{typeCode},
+        #{theme},
+        #{bulletinContent},
+        #{time}
+        );
+    </insert>
+
+    <update id="updateBulletin">
+        UPDATE `gzsbdb`.`gzsb_bulletin`
+        SET
+        `PLAN_STATUS_CODE` = #{planStatusCode},
+        `THEME` = #{theme},
+        `BULLETIN_CONTENT` = #{bulletinContent}
+
+        WHERE
+        `BULLETIN_ID` = #{bulletinId}
+    </update>
+
+    <delete id="deleteBylletin">
+        delete from gzsb_bulletin where  `BULLETIN_ID` = #{bulletinId}
+    </delete>
+
+</mapper>

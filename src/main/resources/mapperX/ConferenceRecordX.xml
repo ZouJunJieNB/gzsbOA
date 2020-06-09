@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gzsb.root.gzsbroot.dao.mapperX.ConferenceRecordMapperX">
+
+    <resultMap id="BaseResultMap" type="Conference">
+        <id column="C_ID" property="cId"/>
+        <result column="TYPE_CODE" property="typeCode"/>
+        <result column="DEPARTMENT_CODE" property="departmentCode"/>
+        <result column="GZS_OPERATOR" property="gzsOperator"/>
+        <result column="MM_ID" property="mmId"/>
+        <result column="START_TIME" property="startTime"/>
+        <result column="END_TIME" property="endTime"/>
+        <result column="THEME" property="theme"/>
+        <result column="C_DESCRIPTION" property="description"/>
+        <result column="OPERATOR" property="operator"/>
+        <result column="CONFERENCE_FILE" property="conferenceFile"/>
+        <result column="STATUS" property="status"/>
+        <association property="type" javaType="Type">
+            <id column="t_TYPE_CODE" property="typeCode"></id>
+            <result column="t_FATHER_CODE" property="fatherCode"></result>
+            <result column="t_DESCRIPTION" property="description"></result>
+        </association>
+        <association property="department" javaType="Department">
+            <id column="d_DEPARTMENT_CODE" property="departmentCode"></id>
+            <result column="d_FATHER_CODE" property="fatherCode"></result>
+            <result column="DEPARTMENT_NAME" property="departmentName"></result>
+        </association>
+        <association property="mettingRoom" javaType="MettingRoom">
+            <id column="m_MM_ID" property="mmId"></id>
+            <result column="METTING_ROOM_NAME" property="mettingRoomName"></result>
+        </association>
+        <collection property="realName" ofType="String" select="selectRealNamesByCID" column="C_ID"></collection>
+    </resultMap>
+
+    <resultMap id="ConferenceParticipantMap" type="ConferenceParticipant">
+        <id column="PP_ID" property="ppId"/>
+        <result column="OPERATOR" property="operator"/>
+        <result column="C_ID" property="cId"/>
+        <result column="BE_PRESENT" property="bePresent"/>
+    </resultMap>
+    
+    <select id="selectRealNamesByCID" resultType="String" parameterType="Integer">
+        SELECT
+        o.REAL_NAME
+        FROM
+        `gzsbdb`.`gzsb_conference` c
+        LEFT JOIN gzsb_conference_participant cp ON c.C_ID = cp.C_ID
+        LEFT JOIN gzsb_operator o ON cp.OPERATOR = o.OPERATOR
+        WHERE c.`C_ID` = #{C_ID}
+    </select>
+
+    <select id="findAllConferenceRecord" resultMap="BaseResultMap">
+        SELECT
+        c.`C_ID`,
+        c.`TYPE_CODE`,
+        c.`DEPARTMENT_CODE`,
+        c.`GZS_OPERATOR`,
+        c.`MM_ID`,
+        c.`THEME`,
+        c.`START_TIME`,
+        c.`END_TIME`,
+        c.`DESCRIPTION` C_DESCRIPTION,
+        c.`OPERATOR`,
+        c.`CONFERENCE_FILE`,
+        c.`STATUS`,
+        t.TYPE_CODE t_TYPE_CODE,
+        t.FATHER_CODE t_FATHER_CODE,
+        t.DESCRIPTION t_DESCRIPTION,
+        d.DEPARTMENT_CODE d_DEPARTMENT_CODE,d.FATHER_CODE d_FATHER_CODE,
+        d.DEPARTMENT_NAME,
+        m.MM_ID m_MM_ID,m.METTING_ROOM_NAME
+        FROM gzsb_conference c
+        LEFT JOIN gzsb_type t ON c.TYPE_CODE = t.TYPE_CODE
+        LEFT JOIN gzsb_department d ON c.DEPARTMENT_CODE = d.DEPARTMENT_CODE
+        LEFT JOIN gzsb_metting_room m ON c.MM_ID = m.MM_ID
+        <where>
+            <if test="theme!= null and theme != ''">
+                c.THEME like "%"#{theme}"%"
+            </if>
+            <if test="operator != null and operator != ''">
+                and c.OPERATOR like "%"#{operator}"%"
+            </if>
+            <if test="status !=null and status !='' ">
+                and c.STATUS = #{status}
+            </if>
+        </where>
+    </select>
+
+    <!-- 插入之后返回主键id赋值给当前传入实体类属性cId -->
+    <insert id="addConferenceRecord"
+            useGeneratedKeys="true" keyProperty="cId">
+        INSERT INTO `gzsb_conference`
+        (`TYPE_CODE`,
+        `DEPARTMENT_CODE`,
+        `GZS_OPERATOR`,
+        `MM_ID`,
+        `THEME`,
+        `START_TIME`,
+        `END_TIME`,
+        `DESCRIPTION`,
+        `OPERATOR`,
+        `CONFERENCE_FILE`,
+        `STATUS`
+        )
+        VALUES
+        (#{typeCode},
+        #{departmentCode},
+        #{gzsOperator},
+        #{mmId},
+        #{theme},
+        #{startTime},
+        #{endTime},
+        #{description},
+        #{operator},
+        #{conferenceFile},
+        #{status}
+        );
+    </insert>
+
+    <delete id="deleteConferenceRecordFindById">
+
+    DELETE FROM `gzsb_conference`
+        WHERE
+        `C_ID` = #{id} ;
+    </delete>
+
+    <select id="findConferenceParticipantByCid" resultMap="ConferenceParticipantMap">
+        SELECT * FROM gzsb_conference_participant
+        WHERE C_ID = #{cId}
+    </select>
+
+    <insert id="addConferenceParticipant">
+        INSERT INTO `gzsb_conference_participant`
+        (`OPERATOR`,
+        `C_ID`,
+        `BE_PRESENT`
+        )
+        VALUES
+        (#{operator},
+        #{cId},
+        '0'
+        );
+    </insert>
+
+    <update id="updateConferenceParticipantStatus">
+      UPDATE `gzsb_conference_participant`
+        SET
+        `BE_PRESENT` = #{bePresent}
+        WHERE
+        `PP_ID` = #{ppId} ;
+    </update>
+
+    <select id="findConferenceByStatus" resultType="Conference">
+        SELECT * FROM gzsb_conference
+        WHERE STATUS=#{status}
+    </select>
+
+    <update id="updateConferenceStatus">
+        update  gzsb_conference set STATUS=#{status} where C_ID = #{cId}
+    </update>
+
+    <select id="findRoomUnavailable" resultType="Integer">
+        SELECT DISTINCT `MM_ID` FROM `gzsb_conference`
+        WHERE (`START_TIME` <![CDATA[ >= ]]> #{startTime} AND `END_TIME` <![CDATA[ <= ]]> #{endTime})
+        or (`START_TIME` <![CDATA[ <= ]]> #{startTime} AND `END_TIME` <![CDATA[ >= ]]> #{endTime})
+        or (`START_TIME` <![CDATA[ >= ]]> #{startTime} AND `START_TIME` <![CDATA[ <= ]]> #{endTime})
+        or (`END_TIME` <![CDATA[ <= ]]> #{endTime} AND `END_TIME` <![CDATA[ >= ]]> #{startTime})
+    </select>
+
+
+
+</mapper>

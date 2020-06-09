@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE generatorConfiguration PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN" "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd" >
+<generatorConfiguration>
+    <!-- <properties resource="database-config.properties" /> -->
+    <!-- 如果命令行运行，则需要加入此jar,放到跟 mybatis-generator-core-1.3.2.jar一起 -->
+    <!-- 如果通过程序，则用WalletMyBatisGenerator生成，不用配置 classPathEntry -->
+    <classPathEntry location="${mysql.connector.dir}" />
+
+    <context id="context1" targetRuntime="MyBatis3" defaultModelType="flat">
+        <!--<plugin type="org.mybatis.generator.plugins.RenameExampleClassPlugin">
+            <property name="searchString" value="Example$" />
+            <property name="replaceString" value="Criteria" />
+        </plugin>-->
+        <commentGenerator>
+            <!-- 删除代码中带有 代码生成器的注释信息 -->
+            <property name="suppressAllComments" value="false" />
+            <property name="suppressDate" value="true" />
+        </commentGenerator>
+
+        <jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://192.168.88.150/gzsb" userId="root" password="root"/>
+        <javaTypeResolver>
+            <property name="forceBigDecimals" value="false"/>
+        </javaTypeResolver>
+        <!-- 生成模型的包名和位置-->
+        <javaModelGenerator targetPackage="com.gzsb.root.gzsbroot.dao.entity" targetProject="${generated.java.dir}">
+            <property name="enableSubPackages" value="true"/>
+            <property name="trimStrings" value="true"/>
+        </javaModelGenerator>
+        <!-- 生成映射文件的包名和位置-->
+        <sqlMapGenerator targetPackage="mapper" targetProject="${generated.source.dir}">
+            <property name="enableSubPackages" value="true"/>
+        </sqlMapGenerator>
+        <!-- 生成DAO的包名和位置-->
+        <javaClientGenerator type="XMLMAPPER" targetPackage="com.gzsb.root.gzsbroot.dao.mapper" targetProject="${generated.java.dir}">
+            <property name="enableSubPackages" value="true"/>
+        </javaClientGenerator>
+
+        <table tableName="GZSB_ROLE" domainObjectName="Role"></table>
+        <table tableName="GZSB_OPERATOR" domainObjectName="Operator"></table>
+        <table tableName="GZSB_PERMISSION" domainObjectName="Permission"></table>
+        <table tableName="GZSB_OPERATOR_ROLE" domainObjectName="OperatorRole"></table>
+        <table tableName="GZSB_ROLE_PERMISSION" domainObjectName="RolePermission"></table>
+        <table tableName="gzsb_attendance" domainObjectName="Attendance"></table>
+        <table tableName="gzsb_bulletin" domainObjectName="Bulletin"></table>
+        <table tableName="gzsb_concat_book" domainObjectName="ConcatBook"></table>
+        <table tableName="gzsb_conference" domainObjectName="Conference"></table>
+        <table tableName="gzsb_conference_participant" domainObjectName="ConferenceParticipant"></table>
+        <table tableName="gzsb_department" domainObjectName="Department"></table>
+        <table tableName="gzsb_department_position" domainObjectName="DepartmentPosition"></table>
+        <table tableName="gzsb_email_account" domainObjectName="EmailAccount"></table>
+        <table tableName="gzsb_emal" domainObjectName="Emal"></table>
+        <table tableName="gzsb_metting_room" domainObjectName="MettingRoom"></table>
+        <table tableName="gzsb_operator_position" domainObjectName="OperatorPosition"></table>
+        <table tableName="gzsb_plan" domainObjectName="Plan"></table>
+        <table tableName="gzsb_process" domainObjectName="Process"></table>
+        <table tableName="gzsb_status" domainObjectName="Status"></table>
+        <table tableName="gzsb_type" domainObjectName="Type"></table>
+
+
+    </context>
+</generatorConfiguration>

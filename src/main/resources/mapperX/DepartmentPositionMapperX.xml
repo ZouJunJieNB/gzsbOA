@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gzsb.root.gzsbroot.dao.mapperX.DepartmentPositionMapperX">
+    <select id="findByDepartmentCode" resultType="departmentPosition">
+        SELECT 	* FROM `gzsbdb`.`gzsb_department_position` WHERE DEPARTMENT_CODE = #{departmentCode}
+    </select>
+
+    <insert id="addDepartmentPosition">
+        INSERT INTO `gzsbdb`.`gzsb_department_position`
+            ( `DEPARTMENT_CODE`,
+            `POSITION_NAME`
+            )
+            VALUES
+            (#{departmentCode},
+            #{positionName}
+            );
+    </insert>
+
+    <delete id="deleteDepartmentPosition">
+        delete from `gzsbdb`.`gzsb_department_position` where `DEPARTMENT_CODE` = #{departmentCode}
+    </delete>
+
+</mapper>
