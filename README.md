@@ -1,4 +1,4 @@
-# GzsbOa
+# GzsbOA
 
 #### 介绍
  本项目为前后端分离项目，由后台两人前端一人的三人小组完成。后台控制层和业务逻 辑层采用SpringBoot 框架开发；数据访问层采用 MyBatis 框架；还使用了Activit 框架作为工作流的开发以 及使用了shiro 作为项目安全框架；为提高性能采用了 redis 缓存。前端使用了 VueCli3.0+ElementUI 进行 的组件式开发；使用axios 对后台进行数据交互。 
